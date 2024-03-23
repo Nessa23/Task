@@ -16,19 +16,25 @@ class OzonSpider(scrapy.Spider):
     allowed_domains = ['ozon.ru']
     start_urls = ['https://www.ozon.ru/category/smartfony-15502/?sorting=rating']
     
-    custom_settings = { 'USER_AGENT':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-    'COOKIES_ENABLED': True,
-    'DOWNLOAD_DELAY': 0.25,
-    'DUPEFILTER_CLASS': 'scrapy.dupefilters.RFPDupeFilter',
-    'ROBOTSTXT_OBEY': True,
-    #'DOWNLOADER_MIDDLEWARES': 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 1,
-    'HTTPPROXY_ENABLED': True,
-    'HTTPPROXY_PROXY_LIST': 'path/to/proxy/list',
-    'DOWNLOADER_MIDDLEWARES': {
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 1,
+    custom_settings = { 
+        'USER_AGENT':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+        'COOKIES_ENABLED': True,
+        'DOWNLOAD_DELAY': 0.25,
+        'DUPEFILTER_CLASS': 'scrapy.dupefilters.RFPDupeFilter',
+        'ROBOTSTXT_OBEY': True,
+        'HTTPPROXY_ENABLED': True,
+        'ROTATING_PROXY_LIST': [
+           
+            'http://proxy1.com:8000',
+            'http://proxy2.com:8000',
+            
+        ],
+        'DOWNLOADER_MIDDLEWARES': {
+            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+            'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+            'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
         },
     }
-
    
     def __init__(self):
         options = Options()
@@ -45,7 +51,7 @@ class OzonSpider(scrapy.Spider):
             yield scrapy.Request(url=link, callback=self.parse_phone)
 
     def parse_phone(self, response):
-        os = 'OS information not found' 
+        os = 'OS information not found'  
         self.driver.get(response.url)
         sel = Selector(text=self.driver.page_source)
         os_extracted = sel.xpath('//dt[text()="Операционная система"]/following-sibling::dd/text()').get()
