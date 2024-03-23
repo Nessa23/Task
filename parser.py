@@ -23,17 +23,14 @@ class OzonSpider(scrapy.Spider):
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.RFPDupeFilter',
         'ROBOTSTXT_OBEY': True,
         'HTTPPROXY_ENABLED': True,
-        'ROTATING_PROXY_LIST': [
-           
-            'http://proxy1.com:8000',
-            'http://proxy2.com:8000',
-            
-        ],
-        'DOWNLOADER_MIDDLEWARES': {
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
-            'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
-            'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
-        },
+        'ROTATING_PROXY_LIST': { 
+        'https://23.95.94.41:3128',
+        'https://82.146.48.200:8000',
+        'https://83.171.248.156:3128'},
+        'DOWNLOADER_MIDDLEWARES':{
+    'rotating_proxies.middlewares.RotatingProxyMiddleware': 350,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 400,
+    }
     }
    
     def __init__(self):
