@@ -45,7 +45,7 @@ class OzonSpider(scrapy.Spider):
             yield scrapy.Request(url=link, callback=self.parse_phone)
 
     def parse_phone(self, response):
-        os = 'OS information not found'  # Add this line
+        os = 'OS information not found' 
         self.driver.get(response.url)
         sel = Selector(text=self.driver.page_source)
         os_extracted = sel.xpath('//dt[text()="Операционная система"]/following-sibling::dd/text()').get()
